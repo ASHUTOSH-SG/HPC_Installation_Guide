@@ -194,7 +194,7 @@ Look for **IPv4 Address**.
 
 ---
 
-### ** 5: Access the Shared Folder from Another PC**
+### 5: Access the Shared Folder from Another PC
 #### **For Windows Clients**
 1. Open **File Explorer**.
 2. In the address bar, type:
@@ -205,9 +205,9 @@ Look for **IPv4 Address**.
    ```
    \\Your-IP-Address\SharedFolder
    ```
-3. Press **Enter**.
+3. Press Enter
 
-#### **For Linux Clients**
+#### For Linux Clients
 1. Open the terminal and type:
    ```bash
    smbclient //Your-PC-Name/SharedFolder -U YourUsername
@@ -219,7 +219,7 @@ Look for **IPv4 Address**.
 
 ---
 
-### ** 6: Map the Shared Folder as a Network Drive (Optional)**
+### 6: Map the Shared Folder as a Network Drive (Optional)
 1. Open **File Explorer**.
 2. Click **This PC**.
 3. Click **Map network drive** (from the toolbar).
