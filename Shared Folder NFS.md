@@ -135,13 +135,13 @@ sudo systemctl enable smbd
 
 
 
-### **How to Create a Shared Folder in Windows**  
+### how to Create a Shared Folder in Windows
 
 Follow these steps to create a **shared folder** in Windows and allow access from other computers on the same network.
 
 ---
 
-### ** 1: Create a Folder**
+### 1: Create a Folder
 1. Open **File Explorer** (`Win + E`).
 2. Navigate to the location where you want to create the shared folder.
 3. **Right-click** → **New** → **Folder**.
@@ -149,7 +149,7 @@ Follow these steps to create a **shared folder** in Windows and allow access fro
 
 ---
 
-### ** 2: Enable Sharing**
+###  2: Enable Sharing
 1. **Right-click** the folder → **Properties**.
 2. Go to the **Sharing** tab.
 3. Click **Advanced Sharing**.
@@ -161,7 +161,7 @@ Follow these steps to create a **shared folder** in Windows and allow access fro
 
 ---
 
-### ** 3: Set Network Permissions**
+### 3: Set Network Permissions
 1. Open **Control Panel** → **Network and Sharing Center**.
 2. Click **Change advanced sharing settings** (on the left).
 3. Under **Private (current profile)**:
@@ -176,7 +176,7 @@ Follow these steps to create a **shared folder** in Windows and allow access fro
 
 ---
 
-### ** 4: Find the Shared Folder Path**
+### 4: Find the Shared Folder Path
 After sharing, the folder will be accessible using:  
 ```
 \\Your-PC-Name\SharedFolder
