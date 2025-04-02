@@ -6,6 +6,8 @@ On the **server-side (Server B)**, install the necessary NFS packages:
 ```bash
 sudo yum install nfs-utils -y  # For CentOS/RHEL
 sudo apt install nfs-kernel-server -y  # For Ubuntu/Debian
+
+sudo zypper install nfs-kernel-server    # for op_slag
 ```
 
 #### **2. Start and Enable NFS Services**
@@ -14,6 +16,7 @@ Enable and start the NFS services:
 ```bash
 sudo systemctl enable nfs-server
 sudo systemctl start nfs-server
+
 sudo systemctl start rpcbind
 sudo systemctl start nfs-idmap
 ```
@@ -61,6 +64,15 @@ sudo systemctl restart nfs-server
 
 ---
 
+### Firewall
+```
+sudo firewall-cmd --permanent --add-service=nfs
+sudo firewall-cmd --permanent --add-service=rpc-bind
+sudo firewall-cmd --permanent --add-service=mountd
+sudo firewall-cmd --reload
+```
+
+
 ### **Client-Side Configuration**
 On **Server A (Client machine)**:
 
@@ -68,6 +80,12 @@ On **Server A (Client machine)**:
    ```bash
    sudo yum install nfs-utils -y  # CentOS/RHEL
    sudo apt install nfs-common -y  # Ubuntu/Debian
+
+
+   or 
+
+    sudo zypper install nfs-client
+
    ```
 
 2. **Create a directory to mount the shared folder:**
@@ -85,12 +103,16 @@ On **Server A (Client machine)**:
 4. **Verify that the mount is successful:**
    ```bash
    df -h | grep nfs
+
+   ls /mnt/nfs_share
    ```
 
 5. **Make the mount persistent (optional)**
    To make the NFS mount persistent after reboot, add this line to **/etc/fstab**:
 
    ```
+   sudo nano /etc/fstab
+   
    192.168.1.100:/server/apps /mnt/nfs_apps nfs defaults 0 0
    ```
 
