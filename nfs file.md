@@ -25,9 +25,9 @@ sudo systemctl start nfs-idmap
 Create a directory that you want to share:
 
 ```bash
-sudo mkdir -p /server/apps
-sudo chmod -R 777 /server/apps  # Give full permissions (for testing purposes)
-sudo chown -R nobody:nogroup /server/apps  # Set ownership
+sudo mkdir -p /server/AIQT
+sudo chmod -R 777 /server/AIQT  # Give full permissions (for testing purposes)
+sudo chown -R nobody:nogroup /server/AIQT  # Set ownership
 ```
 
 #### **4. Configure NFS Exports**
@@ -90,12 +90,12 @@ On **Server A (Client machine)**:
 
 2. **Create a directory to mount the shared folder:**
    ```bash
-   sudo mkdir -p /mnt/nfs_apps
+   sudo mkdir -p /mnt/AIQT
    ```
 
 3. **Mount the NFS share:**
    ```bash
-   sudo mount 192.168.1.100:/server/apps /mnt/nfs_apps
+   sudo mount 192.168.1.100:/server/AIQT /mnt/AIQT
    ```
 
    (Replace `192.168.1.100` with the actual NFS server IP.)
@@ -104,7 +104,7 @@ On **Server A (Client machine)**:
    ```bash
    df -h | grep nfs
 
-   ls /mnt/nfs_share
+   ls /mnt/AIQT
    ```
 
 5. **Make the mount persistent (optional)**
@@ -113,7 +113,7 @@ On **Server A (Client machine)**:
    ```
    sudo nano /etc/fstab
    
-   192.168.1.100:/server/apps /mnt/nfs_apps nfs defaults 0 0
+192.168.1.100:/server/AIQT /mnt/AIQT nfs defaults 0 0
    ```
 
 ---
@@ -121,11 +121,11 @@ On **Server A (Client machine)**:
 ### **Testing**
 - Try creating a file from the client:
   ```bash
-  touch /mnt/nfs_apps/testfile.txt
+touch /mnt/AIQT/testfile.txt
   ```
 - Check if the file appears on the server:
   ```bash
-  ls /server/apps/
+  ls /server/AIQT/
   ```
 
 If the file appears on both machines, the NFS setup is working correctly!
