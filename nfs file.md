@@ -110,3 +110,105 @@ If the file appears on both machines, the NFS setup is working correctly!
 
 ---
 
+
+
+
+## CentOS/RHEL (Server & Client Firewall Configuration)
+
+### On the NFS Server
+
+#### Allow NFS Services in Firewalld
+```bash
+sudo firewall-cmd --permanent --add-service=nfs
+sudo firewall-cmd --permanent --add-service=rpc-bind
+sudo firewall-cmd --permanent --add-service=mountd
+```
+
+#### Set Static Ports for NFS Services
+Open the NFS configuration file:
+```bash
+sudo nano /etc/nfs.conf
+```
+Add the following lines:
+```ini
+[nfsd]
+vers3=yes
+vers4=yes
+
+[mountd]
+port=20048
+
+[statd]
+port=32765
+outgoing-port=32766
+
+[lockd]
+port=32767
+```
+
+#### Restart NFS Service
+```bash
+sudo systemctl restart nfs-server
+sudo exportfs -rav
+```
+
+#### Allow Static Ports in Firewalld
+```bash
+sudo firewall-cmd --permanent --add-port=20048/tcp
+sudo firewall-cmd --permanent --add-port=32765/tcp
+sudo firewall-cmd --permanent --add-port=32767/tcp
+sudo firewall-cmd --reload
+```
+
+### On the NFS Client (CentOS/RHEL)
+
+#### Allow NFS Traffic on the Client Side
+```bash
+sudo firewall-cmd --permanent --add-service=nfs
+sudo firewall-cmd --permanent --add-service=rpc-bind
+sudo firewall-cmd --permanent --add-service=mountd
+sudo firewall-cmd --reload
+```
+
+#### Test Connectivity from Client
+```bash
+showmount -e <NFS-Server-IP>
+```
+
+---
+
+## Ubuntu/Debian (Server & Client Firewall Configuration)
+
+### On the NFS Server
+
+#### Allow NFS and RPC Services in UFW (Uncomplicated Firewall)
+```bash
+sudo ufw allow 2049/tcp
+sudo ufw allow 111/tcp
+sudo ufw allow 20048/tcp
+sudo ufw allow 32765/tcp
+sudo ufw allow 32767/tcp
+```
+
+#### Enable UFW
+```bash
+sudo ufw enable
+```
+
+#### Restart NFS Services
+```bash
+sudo systemctl restart nfs-kernel-server
+sudo exportfs -rav
+```
+
+### On the NFS Client (Ubuntu/Debian)
+
+#### Allow NFS Traffic on the Client Side
+```bash
+sudo ufw allow from <NFS-Server-IP> to any port nfs
+sudo ufw reload
+```
+
+#### Test Connection
+```bash
+showmount -e <NFS-Server-IP>
