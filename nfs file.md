@@ -1,37 +1,46 @@
+# NFS Server and Client Setup Guide
 
+## 1. Install NFS Packages
 
-#### **1. Install NFS Packages**
-On the **server-side (Server B)**, install the necessary NFS packages:
+### **On the NFS Server (Server B)**
+Install the required NFS packages based on your OS:
 
 ```bash
-sudo yum install nfs-utils -y  # For CentOS/RHEL
-sudo apt install nfs-kernel-server -y  # For Ubuntu/Debian
+# For CentOS/RHEL
+sudo yum install nfs-utils -y  
 
-sudo zypper install nfs-kernel-server    # for op_slag
+# For Ubuntu/Debian
+sudo apt install nfs-kernel-server -y  
+
+# For OpenSUSE
+sudo zypper install nfs-kernel-server  
 ```
 
-#### **2. Start and Enable NFS Services**
-Enable and start the NFS services:
+## 2. Start and Enable NFS Services
+Enable and start the necessary NFS services:
 
 ```bash
 sudo systemctl enable nfs-server
 sudo systemctl start nfs-server
 
+sudo systemctl enable rpcbind
 sudo systemctl start rpcbind
+
+sudo systemctl enable nfs-idmap
 sudo systemctl start nfs-idmap
 ```
 
-#### **3. Create the Shared Directory**
-Create a directory that you want to share:
+## 3. Create the Shared Directory
+Create a directory that will be shared:
 
 ```bash
 sudo mkdir -p /server/AIQT
-sudo chmod -R 777 /server/AIQT  # Give full permissions (for testing purposes)
+sudo chmod -R 777 /server/AIQT  # Full permissions (for testing purposes)
 sudo chown -R nobody:nogroup /server/AIQT  # Set ownership
 ```
 
-#### **4. Configure NFS Exports**
-Edit the **/etc/exports** file to define which clients can access the directory:
+## 4. Configure NFS Exports
+Edit the `/etc/exports` file to define the shared directory and allowed clients:
 
 ```bash
 sudo nano /etc/exports
@@ -40,16 +49,16 @@ sudo nano /etc/exports
 Add the following line:
 
 ```
-/server/apps 192.168.1.0/24(rw,sync,no_root_squash)
+/server/AIQT 192.168.1.0/24(rw,sync,no_root_squash)
 ```
 
-- **`/server/apps`** – Directory to share.
+- **`/server/AIQT`** – Directory to share.
 - **`192.168.1.0/24`** – Allows all machines in the subnet to access.
 - **`rw`** – Read/write permissions.
 - **`sync`** – Ensures data is written to disk before confirming write success.
 - **`no_root_squash`** – Allows root users from the client to access files as root.
 
-#### **5. Apply the NFS Configuration**
+## 5. Apply the NFS Configuration
 Run:
 
 ```bash
@@ -62,96 +71,106 @@ Restart the NFS service:
 sudo systemctl restart nfs-server
 ```
 
----
+## 6. Configure Firewall Rules
 
-### Firewall
-```
+### **CentOS/RHEL Firewall Rules**
+```bash
 sudo firewall-cmd --permanent --add-service=nfs
 sudo firewall-cmd --permanent --add-service=rpc-bind
 sudo firewall-cmd --permanent --add-service=mountd
 sudo firewall-cmd --reload
 ```
 
-
-### **Client-Side Configuration**
-On **Server A (Client machine)**:
-
-1. **Install NFS client packages:**
-   ```bash
-   sudo yum install nfs-utils -y  # CentOS/RHEL
-   sudo apt install nfs-common -y  # Ubuntu/Debian
-
-
-   or 
-
-    sudo zypper install nfs-client
-
-   ```
-
-2. **Create a directory to mount the shared folder:**
-   ```bash
-   sudo mkdir -p /mnt/AIQT
-   ```
-
-3. **Mount the NFS share:**
-   ```bash
-   sudo mount 192.168.1.100:/server/AIQT /mnt/AIQT
-   ```
-
-   (Replace `192.168.1.100` with the actual NFS server IP.)
-
-4. **Verify that the mount is successful:**
-   ```bash
-   df -h | grep nfs
-
-   ls /mnt/AIQT
-   ```
-
-5. **Make the mount persistent (optional)**
-   To make the NFS mount persistent after reboot, add this line to **/etc/fstab**:
-
-   ```
-   sudo nano /etc/fstab
-   
-192.168.1.100:/server/AIQT /mnt/AIQT nfs defaults 0 0
-   ```
+### **Ubuntu/Debian Firewall Rules (UFW)**
+```bash
+sudo ufw allow 111/tcp
+sudo ufw allow 111/udp
+sudo ufw allow 2049/tcp
+sudo ufw allow 2049/udp
+sudo ufw allow 20048/tcp
+sudo ufw allow 20048/udp
+sudo ufw enable
+```
 
 ---
 
-### **Testing**
-- Try creating a file from the client:
-  ```bash
+# Client-Side Configuration (Server A)
+
+## 1. Install NFS Client Packages
+
+```bash
+# For CentOS/RHEL
+sudo yum install nfs-utils -y  
+
+# For Ubuntu/Debian
+sudo apt install nfs-common -y  
+
+# For OpenSUSE
+sudo zypper install nfs-client
+```
+
+## 2. Create a Mount Directory
+
+```bash
+sudo mkdir -p /mnt/AIQT
+```
+
+## 3. Mount the NFS Share
+
+```bash
+sudo mount 192.168.1.100:/server/AIQT /mnt/AIQT
+```
+
+(Replace `192.168.1.100` with the actual NFS server IP.)
+
+## 4. Verify the Mount
+
+```bash
+mount | grep nfs
+ls /mnt/AIQT
+```
+
+## 5. Make the Mount Persistent
+To make the NFS mount persistent after reboot, add this line to `/etc/fstab`:
+
+```bash
+sudo nano /etc/fstab
+```
+
+Add the following line:
+
+```
+192.168.1.100:/server/AIQT /mnt/AIQT nfs defaults 0 0
+```
+
+---
+
+# **Testing the NFS Setup**
+
+### **Test File Creation**
+On the **client machine**:
+```bash
 touch /mnt/AIQT/testfile.txt
-  ```
-- Check if the file appears on the server:
-  ```bash
-  ls /server/AIQT/
-  ```
+```
+
+On the **server machine**:
+```bash
+ls /server/AIQT/
+```
 
 If the file appears on both machines, the NFS setup is working correctly!
 
 ---
 
+# **Advanced NFS Configuration (CentOS/RHEL Only)**
 
-
-
-## CentOS/RHEL (Server & Client Firewall Configuration)
-
-### On the NFS Server
-
-#### Allow NFS Services in Firewalld
-```bash
-sudo firewall-cmd --permanent --add-service=nfs
-sudo firewall-cmd --permanent --add-service=rpc-bind
-sudo firewall-cmd --permanent --add-service=mountd
-```
-
-#### Set Static Ports for NFS Services
-Open the NFS configuration file:
+### **Set Static Ports for NFS Services**
+Edit the NFS configuration file:
 ```bash
 sudo nano /etc/nfs.conf
 ```
 Add the following lines:
+
 ```ini
 [nfsd]
 vers3=yes
@@ -168,13 +187,14 @@ outgoing-port=32766
 port=32767
 ```
 
-#### Restart NFS Service
+### **Restart NFS Services**
 ```bash
+sudo systemctl restart nfs-config.service
 sudo systemctl restart nfs-server
 sudo exportfs -rav
 ```
 
-#### Allow Static Ports in Firewalld
+### **Allow Static Ports in Firewalld**
 ```bash
 sudo firewall-cmd --permanent --add-port=20048/tcp
 sudo firewall-cmd --permanent --add-port=32765/tcp
@@ -182,55 +202,29 @@ sudo firewall-cmd --permanent --add-port=32767/tcp
 sudo firewall-cmd --reload
 ```
 
-### On the NFS Client (CentOS/RHEL)
-
-#### Allow NFS Traffic on the Client Side
+### **Test NFS Connectivity from Client**
 ```bash
-sudo firewall-cmd --permanent --add-service=nfs
-sudo firewall-cmd --permanent --add-service=rpc-bind
-sudo firewall-cmd --permanent --add-service=mountd
-sudo firewall-cmd --reload
-```
-
-#### Test Connectivity from Client
-```bash
-showmount -e <NFS-Server-IP>
+showmount -e 192.168.1.100
 ```
 
 ---
 
-## Ubuntu/Debian (Server & Client Firewall Configuration)
+# **Ubuntu/Debian Advanced Configuration**
 
-### On the NFS Server
-
-#### Allow NFS and RPC Services in UFW (Uncomplicated Firewall)
-```bash
-sudo ufw allow 2049/tcp
-sudo ufw allow 111/tcp
-sudo ufw allow 20048/tcp
-sudo ufw allow 32765/tcp
-sudo ufw allow 32767/tcp
-```
-
-#### Enable UFW
-```bash
-sudo ufw enable
-```
-
-#### Restart NFS Services
+### **Restart NFS Services**
 ```bash
 sudo systemctl restart nfs-kernel-server
 sudo exportfs -rav
 ```
 
-### On the NFS Client (Ubuntu/Debian)
-
-#### Allow NFS Traffic on the Client Side
+### **Allow NFS Traffic on Client Side (UFW)**
 ```bash
-sudo ufw allow from <NFS-Server-IP> to any port nfs
+sudo ufw allow from 192.168.1.100 to any port nfs
 sudo ufw reload
 ```
 
-#### Test Connection
+### **Test Connection**
 ```bash
-showmount -e <NFS-Server-IP>
+showmount -e 192.168.1.100
+```
+
