@@ -1,124 +1,116 @@
 
-## USER MANAGEMENT
+---
+
+# User Management for CentOS, Rocky Linux, and Ubuntu
+
+## CentOS / Rocky Linux
+
+### Step 1: Create the user
+```bash
+sudo useradd -m ashutosh
+```
+The `-m` flag creates a home directory at `/home/ashutosh`.
+
+### Step 2: Set a password
+```bash
+sudo passwd ashutosh
+```
+
+### Step 3: Add the user to the `wheel` group
+```bash
+sudo usermod -aG wheel ashutosh
+```
+The `wheel` group in CentOS/Rocky controls sudo access.
+
+### Step 4: Verify sudo access
+Log in as `ashutosh`:
+```bash
+su - ashutosh
+```
+
+Then test:
+```bash
+sudo whoami
+```
+
+If configured properly, it will return:
+```
+root
+```
+
+### Step 5: Check if the user exists
+To check if the user `ashutosh` exists, you can check the `/etc/passwd` file:
+```bash
+cat /etc/passwd | grep ashutosh
+```
+
+### Step 6: Delete the user
+To delete the user without removing the home directory:
+```bash
+sudo userdel ashutosh
+```
+
+To delete the user and remove their home directory:
+```bash
+sudo userdel -r ashutosh
+```
+
+To remove the group if it was the only one left:
+```bash
+sudo groupdel ashutosh
+```
 
 ---
 
-### **CentOS / Rocky Linux: Create and Delete User**
+## Ubuntu
 
-#### **Creating a User**
-1. **Log in as root or use `sudo`**  
-   You need administrative privileges.
+### Step 1: Create the user
+```bash
+sudo adduser ashutosh
+```
+It will prompt you for a password and other details.
 
-2. **Create the user**  
-   ```bash
-   sudo useradd username
-   ```
-   Replace `username` with the desired user name.
+### Step 2: Add the user to the `sudo` group
+```bash
+sudo usermod -aG sudo ashutosh
+```
 
-3. **Set the user's password**  
-   ```bash
-   sudo passwd username
-   ```
-   Enter the password when prompted.
+### Step 3: Verify sudo access
+Switch to the user:
+```bash
+su - ashutosh
+```
 
-4. **Add the user to a group (optional)**  
-   To give the user additional permissions (e.g., `wheel` group for sudo access):
-   ```bash
-   sudo usermod -aG groupname username
-   ```
-   Replace `groupname` (e.g., `wheel`) and `username` with the actual names.
+Then test:
+```bash
+sudo whoami
+```
 
----
+Expected output:
+```
+root
+```
 
-#### **Deleting a User**
-1. **Delete the user (without removing home directory)**  
-   ```bash
-   sudo userdel username
-   ```
+### Step 4: Check if the user exists
+To check if the user `ashutosh` exists, you can check the `/etc/passwd` file:
+```bash
+cat /etc/passwd | grep ashutosh
+```
 
-2. **Delete the user and remove their home directory**  
-   ```bash
-   sudo userdel -r username
-   ```
+### Step 5: Delete the user
+To delete the user without removing the home directory:
+```bash
+sudo deluser ashutosh
+```
 
-3. **Verify the user has been deleted**  
-   ```bash
-   cat /etc/passwd
-   ```
+To delete the user and remove their home directory:
+```bash
+sudo deluser --remove-home ashutosh
+```
 
-4. **Remove the group (if necessary)**  
-   If the user was the only one in the group and you want to remove the group:
-   ```bash
-   sudo groupdel groupname
-   ```
+To remove the group if it was the only one left:
+```bash
+sudo delgroup ashutosh
+```
 
-5. **Check if the user is logged in and kill active processes (optional)**  
-   ```bash
-   ps -u username
-   sudo pkill -u username
-   ```
-
----
-
-### **Ubuntu: Create and Delete User**
-
-#### **Creating a User**
-1. **Log in as root or use `sudo`**  
-   You need administrative privileges.
-
-2. **Create the user**  
-   ```bash
-   sudo adduser username
-   ```
-   Replace `username` with the desired user name. This command will also ask for details such as the password.
-
-3. **Add the user to a group (optional)**  
-   To give the user additional permissions (e.g., `sudo` group for administrative access):
-   ```bash
-   sudo usermod -aG sudo username
-   ```
-
----
-
-#### **Deleting a User**
-1. **Delete the user (without removing home directory)**  
-   ```bash
-   sudo deluser username
-   ```
-
-2. **Delete the user and remove their home directory**  
-   ```bash
-   sudo deluser --remove-home username
-   ```
-
-3. **Verify the user has been deleted**  
-   ```bash
-   cat /etc/passwd
-   ```
-
-4. **Remove the group (if necessary)**  
-   If the user was the only one in the group and you want to remove the group:
-   ```bash
-   sudo delgroup groupname
-   ```
-
-5. **Check if the user is logged in and kill active processes (optional)**  
-   ```bash
-   ps -u username
-   sudo pkill -u username
-   ```
-
----
-
-### **General Notes for Both Systems**
-- **Check if a user exists**  
-  You can check if a user exists on the system by viewing `/etc/passwd`:
-  ```bash
-  cat /etc/passwd
-  ```
-
-- **Important Considerations**  
-  - Deleting a user doesn’t automatically remove the associated group (unless specified).
-  - If the user is currently logged in, kill their processes before deletion if necessary.
-  
 ---
