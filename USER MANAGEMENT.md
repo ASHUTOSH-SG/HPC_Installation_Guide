@@ -75,6 +75,16 @@ It will prompt you for a password and other details.
 sudo usermod -aG sudo ashutosh
 ```
 
+```
+sudo cp /home/ubuntu/.bashrc /home/abhishek/
+sudo chown abhishek:abhishek /home/abhishek/.bashrc
+
+sudo cp /home/ubuntu/.profile /home/abhishek/
+sudo chown abhishek:abhishek /home/abhishek/.profile
+
+
+```
+
 ### Step 3: Verify sudo access
 Switch to the user:
 ```bash
