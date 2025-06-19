@@ -9,6 +9,9 @@
 ```bash
 sudo useradd -m ashutosh
 ```
+
+```
+```
 The `-m` flag creates a home directory at `/home/ashutosh`.
 
 ### Step 2: Set a password
