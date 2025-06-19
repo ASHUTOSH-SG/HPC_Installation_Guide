@@ -3,6 +3,18 @@
 
 # User Management for CentOS, Rocky Linux, and Ubuntu
 
+## ubuntu
+```
+sudo deluser --remove-home ashutosh
+
+sudo useradd -m -k /etc/skel -s /bin/bash ashutosh
+
+sudo usermod -aG sudo ashutosh
+
+sudo passwd ashutosh
+
+```
+
 ## CentOS / Rocky Linux
 
 ### Step 1: Create the user
