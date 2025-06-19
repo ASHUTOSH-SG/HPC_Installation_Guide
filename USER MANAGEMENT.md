@@ -11,6 +11,8 @@ sudo useradd -m ashutosh
 ```
 
 ```
+sudo useradd -m -d /home/ashutosh ashutosh
+
 ```
 The `-m` flag creates a home directory at `/home/ashutosh`.
 
